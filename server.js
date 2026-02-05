@@ -1,0 +1,27 @@
+import express from 'express'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const app = express()
+const port = Number(process.env.PORT) || 8080
+
+app.use((req, res, next) => {
+    const url = req.url || ''
+    if (url.includes('lcjs')) {
+        res.setHeader('Cross-Origin-Opener-Policy', 'same-origin')
+        res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp')
+    }
+    res.setHeader('Access-Control-Allow-Origin', '*')
+
+    next()
+})
+
+app.use('/chartgpu', express.static(path.join(__dirname, 'node_modules/chartgpu/dist')))
+// Fallback: packages installed one directory up (when this repo is checked out inside a parent that holds node_modules)
+app.use('/chartgpu', express.static(path.join(__dirname, '../../node_modules/chartgpu/dist')))
+app.use(express.static(path.join(__dirname, 'bench')))
+
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`)
+})

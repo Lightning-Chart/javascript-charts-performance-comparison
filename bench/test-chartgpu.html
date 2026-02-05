@@ -1,0 +1,295 @@
+<html>
+    <head>
+        <style>
+            body {
+                margin: 0px;
+            }
+
+            html, body, #chart {
+                width: 100%;
+                height: 100%;
+            }
+            #chart {
+                width: 2000px;
+                height: 1000px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="chart"></div>
+        <script type="module">
+            import { ChartGPU } from '/chartgpu/index.js'
+
+            const container = document.getElementById('chart')
+
+            const config = await window.testSetup()
+            const { channels, dataSetSize, appendPointsPerSecond, appendTestDurationMs, feature, maxCapacityTest } = config
+            // Max data capacity mode (same rules for every library that runs it): data is generated and given to the
+            // chart in chunks (one shot up to 10M points per channel, else maxCapacityChunkSize), waiting for a rendered
+            // frame after each chunk and reporting progress, instead of generating the full data set up front.
+            const maxCapacityChunkSize = dataSetSize <= 10_000_000 ? dataSetSize : config.maxCapacityChunkSize || 2_000_000
+            // Size of the data generated up front: the full data set, or only the first chunk in max capacity mode.
+            const initialSize = maxCapacityTest ? maxCapacityChunkSize : dataSetSize
+
+            // Per-channel random-walk data in ChartGPU's columnar format (XYArraysData: { x, y } typed arrays),
+            // which avoids per-point object allocations.
+            const xs = new Float64Array(initialSize)
+            for (let i = 0; i < initialSize; i += 1) xs[i] = i
+            const dataSets = new Array(channels).fill(0).map(() => {
+                const ys = new Float32Array(initialSize)
+                let prev = 0
+                for (let i = 0; i < initialSize; i += 1) {
+                    prev += Math.random() * 2 - 1
+                    ys[i] = prev
+                }
+                return ys
+            })
+
+            // Manual Y axis fitting for the streaming phase.
+            // The other libraries in this benchmark (LCJS, SciChart) fit the Y axis to the data currently in view on every frame,
+            // which includes shrinking back when old points are dropped from the rolling window. ChartGPU 0.4.0 cannot do that on
+            // its own: its auto range ('sticky', also 'continuous' / autoBounds 'visible' / dataZoom) only ever grows while appendData
+            // with maxPoints drops old points, so after a large value leaves the window the axis stays stretched and the data is squashed.
+            // To make the comparison fair this page tracks the Y extents of the retained window itself and sets the axis min/max every
+            // frame. Cost is O(appended points) per frame: per-block min/max (BLOCK points per block) for the retained window, plus an
+            // exact rescan of the oldest, partially dropped block. The statistics are built here, outside the timed load.
+            // The value at absolute point index a is dataSets[ch][a % dataSetSize] (initial data and the recycled append source).
+            const BLOCK = 4096
+            const nBlocks = Math.ceil(dataSetSize / BLOCK) + 2
+            const blockMin = dataSets.map(() => new Float64Array(nBlocks))
+            const blockMax = dataSets.map(() => new Float64Array(nBlocks))
+            const addToBlocks = (ch, values, firstIndex) => {
+                const mins = blockMin[ch]
+                const maxs = blockMax[ch]
+                for (let i = 0; i < values.length; i += 1) {
+                    const a = firstIndex + i
+                    const slot = Math.floor(a / BLOCK) % nBlocks
+                    const v = values[i]
+                    if (a % BLOCK === 0) {
+                        mins[slot] = v
+                        maxs[slot] = v
+                    } else {
+                        if (v < mins[slot]) mins[slot] = v
+                        if (v > maxs[slot]) maxs[slot] = v
+                    }
+                }
+            }
+            if (!maxCapacityTest) dataSets.forEach((ys, ch) => addToBlocks(ch, ys, 0))
+            // Exact Y extents (over all channels) of the points currently in the window [total - dataSetSize, total).
+            const windowYExtents = (total) => {
+                const first = total - dataSetSize
+                const bOld = Math.floor(first / BLOCK)
+                const bNew = Math.floor((total - 1) / BLOCK)
+                const oldEnd = Math.min((bOld + 1) * BLOCK, total)
+                let lo = Infinity
+                let hi = -Infinity
+                for (let ch = 0; ch < channels; ch += 1) {
+                    // Oldest block: only its points that are still in the window count, so rescan those exactly.
+                    for (let a = first; a < oldEnd; a += 1) {
+                        const v = dataSets[ch][a % dataSetSize]
+                        if (v < lo) lo = v
+                        if (v > hi) hi = v
+                    }
+                    for (let b = bOld + 1; b <= bNew; b += 1) {
+                        const slot = b % nBlocks
+                        if (blockMin[ch][slot] < lo) lo = blockMin[ch][slot]
+                        if (blockMax[ch][slot] > hi) hi = blockMax[ch][slot]
+                    }
+                }
+                return [lo, hi]
+            }
+
+            const seriesTypeFor = (feature) => {
+                switch (feature) {
+                    case 'scatter':
+                        return { type: 'scatter', sampling: 'none' }
+                    case 'area':
+                        return { type: 'area', sampling: 'none' }
+                    case 'step':
+                        return { type: 'line', step: true, sampling: 'none' }
+                    case 'spline':
+                        return { type: 'line', smooth: true, sampling: 'none' }
+                    case 'line':
+                    default:
+                        return { type: 'line', sampling: 'none' }
+                }
+            }
+
+            window.testPerform = async () => {
+                try {
+                    const seriesBase = seriesTypeFor(feature)
+                    const chartOptions = {
+                        animation: false,
+                        // Never downsample: lod 'strict' disables the draw-time point-skipping (dense LOD) for line/area/scatter; per-series sampling 'none' disables CPU-side decimation.
+                        performance: { lod: 'strict' },
+                        // Tooltips off: with appendData maxPoints this skips the hit-test store update (documented fast path).
+                        tooltip: { show: false },
+                        // Max capacity mode: X axis fixed to the full data range [0, dataSetSize] (same for every library, LCJS does the
+                        // same). Then a library that drops or skips part of the data leaves an empty part of the chart, which the bench's
+                        // render coverage check (bench/index.js) detects, instead of the axis silently fitting to whatever was kept.
+                        xAxis: maxCapacityTest ? { type: 'value', min: 0, max: dataSetSize } : { type: 'value' },
+                        yAxis: { type: 'value' },
+                        series: dataSets.map((ys, i) => ({ ...seriesBase, name: `ch${i}`, data: { x: xs, y: ys } })),
+                    }
+                    const chart = await ChartGPU.create(container, chartOptions)
+                    chart.resize()
+
+                    if (maxCapacityTest) {
+                        // ChartGPU specifics in max capacity mode (vs. LCJS / SciChart / uPlot):
+                        // - the chart is created with the first chunk (an empty series is not a valid initial data set), the
+                        //   rest goes in with appendData(series, { x, y }) without maxPoints, i.e. ChartGPU's own API for
+                        //   growing a series (no FIFO dropping).
+                        // - "rendered" = after an animation frame, chart.needsRender() is false (ChartGPU renders on its own
+                        //   rAF in 'auto' mode and clears the dirty flag once the frame is drawn).
+                        // - the in-page canvas read-back validation below is not used here: it re-renders via setOption with
+                        //   the options object, which in this mode only holds the first chunk. The bench's generic max
+                        //   capacity render check (bench/index.js, screenshot) validates the drawn result instead, same as
+                        //   for the other libraries.
+                        const waitRendered = async () => {
+                            do {
+                                await new Promise((resolve) => requestAnimationFrame(resolve))
+                            } while (chart.needsRender())
+                        }
+                        const prev = dataSets.map((ys) => ys[ys.length - 1])
+                        await waitRendered()
+                        if (window.maxCapacityInputProgress) window.maxCapacityInputProgress(initialSize)
+                        for (let start = initialSize; start < dataSetSize; start += maxCapacityChunkSize) {
+                            const count = Math.min(maxCapacityChunkSize, dataSetSize - start)
+                            const cx = new Float64Array(count)
+                            for (let i = 0; i < count; i += 1) cx[i] = start + i
+                            for (let ch = 0; ch < channels; ch += 1) {
+                                const cy = new Float32Array(count)
+                                let p = prev[ch]
+                                for (let i = 0; i < count; i += 1) cy[i] = p = p + Math.random() * 2 - 1
+                                prev[ch] = p
+                                chart.appendData(ch, { x: cx, y: cy })
+                            }
+                            await waitRendered()
+                            if (window.maxCapacityInputProgress) window.maxCapacityInputProgress(start + count)
+                        }
+                        window.loadingTestFinished(window.testStart, window.performance.now())
+                        await new Promise((resolve) => setTimeout(resolve, 500))
+                        window.appendTestFinished(window.performance.now(), -1)
+                        return
+                    }
+
+                    requestAnimationFrame(async () => {
+                        window.loadingTestFinished(window.testStart, window.performance.now())
+                        await new Promise((resolve) => setTimeout(resolve, 500))
+
+                        // Render validation (outside the timed load). ChartGPU silently draws NOTHING when data exceeds a GPU limit
+                        // (e.g. a series above ~16.7M points, or step series above ~8M points): no exception, no WebGPU error, the
+                        // canvas just stays empty. The harness's screenshot check cannot see that (the legend alone is non-white), so
+                        // read the chart canvas back and require series-colored (saturated) pixels on it. Background, grid and axis
+                        // labels are unsaturated. A chart without drawn series fails the test and no result is recorded.
+                        const drawnSeriesPixelShare = () => {
+                            const w = 400
+                            const h = 200
+                            const probe = document.createElement('canvas')
+                            probe.width = w
+                            probe.height = h
+                            const ctx = probe.getContext('2d', { willReadFrequently: true })
+                            // ChartGPU stacks several canvases (series, grid/axes, overlay); measure each and take the best.
+                            let best = 0
+                            container.querySelectorAll('canvas').forEach((c) => {
+                                ctx.clearRect(0, 0, w, h)
+                                ctx.drawImage(c, 0, 0, w, h)
+                                const px = ctx.getImageData(0, 0, w, h).data
+                                let colored = 0
+                                for (let i = 0; i < px.length; i += 4) {
+                                    const r = px[i], g = px[i + 1], b = px[i + 2], a = px[i + 3]
+                                    if (a > 0 && Math.max(r, g, b) - Math.min(r, g, b) > 80) colored += 1
+                                }
+                                best = Math.max(best, colored / (w * h))
+                            })
+                            return best
+                        }
+                        // A WebGPU canvas can only be read back right after it was rendered (same task). So render one frame on
+                        // demand (external render mode; setOption with the same options marks the chart dirty), wait for the
+                        // deferred GPU submit (one microtask), read the pixels, then hand rendering back to ChartGPU.
+                        chart.setRenderMode('external')
+                        chart.setOption(chartOptions)
+                        chart.renderFrame()
+                        await Promise.resolve()
+                        const share = drawnSeriesPixelShare()
+                        chart.setRenderMode('auto')
+                        if (share < 0.002) {
+                            console.error(`ChartGPU did not draw the series (series-colored pixels ${(share * 100).toFixed(3)} %)`)
+                            if (window.error) window.error()
+                            return
+                        }
+
+                        if (!appendTestDurationMs) {
+                            window.appendTestFinished(window.performance.now(), -1)
+                            return
+                        }
+
+                        // NOT SUPPORTED: scatter streaming. In ChartGPU 0.4.0 (latest) a scatter series ignores appendData: appended
+                        // points are never drawn, with or without the maxPoints ring (verified by screenshots taken during streaming:
+                        // the x axis scrolls but the chart shows only the initial points; the other series types draw appended points
+                        // correctly). The scatter renderer caches its geometry per series data reference and never re-reads appended
+                        // points. The only way to stream a scatter chart would be to replace the series data every frame, which is not
+                        // the library's streaming API, so ChartGPU scatter is marked unsupported in supported.md and excluded from results.
+                        // Fail loudly here so that no fps number for an empty chart can be recorded by accident.
+                        if (feature === 'scatter') {
+                            console.error('ChartGPU scatter streaming is not supported: appendData does not draw appended scatter points')
+                            if (window.error) window.error()
+                            return
+                        }
+
+                        // ChartGPU streaming API: appendData with maxPoints = fixed-capacity FIFO ring (drops oldest
+                        // points, O(append)), i.e. a rolling window of dataSetSize points per channel.
+                        const tStart = window.performance.now()
+                        let frameCount = 0
+                        let xNext = dataSetSize
+                        let iSample = 0
+                        let total = dataSetSize // absolute index one past the newest point in the window
+                        let tPrev = tStart
+
+                        const frame = () => {
+                            frameCount += 1
+                            const t = window.performance.now()
+                            const d = t - tPrev
+                            tPrev = t
+                            const appendCount = Math.round((appendPointsPerSecond * d) / 1000)
+                            if (appendCount > 0) {
+                                const ax = new Float64Array(appendCount)
+                                for (let i = 0; i < appendCount; i += 1) ax[i] = xNext + i
+                                for (let ch = 0; ch < channels; ch += 1) {
+                                    const ay = new Float32Array(appendCount)
+                                    for (let i = 0; i < appendCount; i += 1) ay[i] = dataSets[ch][(iSample + i) % dataSetSize]
+                                    chart.appendData(ch, { x: ax, y: ay }, { maxPoints: dataSetSize })
+                                    addToBlocks(ch, ay, total)
+                                }
+                                iSample += appendCount
+                                xNext += appendCount
+                                total += appendCount
+                                // Fit the Y axis to the data in the window (see the note above). setOption has to carry the full option
+                                // object: a partial one rebuilds the chart without its series. Passing the same series data references
+                                // does not re-upload data (measured: no fps cost vs. not updating the axis at all).
+                                const [yLo, yHi] = windowYExtents(total)
+                                const yPad = (yHi - yLo) * 0.02 || 1
+                                chart.setOption({ ...chartOptions, yAxis: { type: 'value', min: yLo - yPad, max: yHi + yPad } })
+                            }
+
+                            if (t - tStart > appendTestDurationMs) {
+                                const fps = (1000 * frameCount) / (t - tStart)
+                                window.appendTestFinished(window.performance.now(), fps)
+                            } else {
+                                requestAnimationFrame(frame)
+                            }
+                        }
+                        requestAnimationFrame(frame)
+                    })
+                } catch (err) {
+                    console.error(err)
+                    if (window.error) window.error()
+                }
+            }
+
+            window.testReadyToBegin()
+        </script>
+        <script src="common.js"></script>
+    </body>
+</html>
