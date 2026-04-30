@@ -3,8 +3,32 @@
 /* eslint-disable no-promise-executor-return */
 import puppeteer from 'puppeteer'
 import fs from 'fs'
+import os from 'os'
 import path from 'path'
 import { PNG } from 'pngjs'
+
+const findNewerChrome = () => {
+    if (process.env.CHROME_PATH) return process.env.CHROME_PATH
+    try {
+        const cacheDir = path.join(os.homedir(), '.cache', 'puppeteer', 'chrome')
+        if (!fs.existsSync(cacheDir)) return undefined
+        const versions = fs.readdirSync(cacheDir)
+            .map((d) => {
+                const m = d.match(/^win64-(\d+)\.(\d+)\.(\d+)\.(\d+)$/)
+                return m ? { name: d, v: m.slice(1).map(Number) } : null
+            })
+            .filter(Boolean)
+            .sort((a, b) => {
+                for (let i = 0; i < 4; i++) if (a.v[i] !== b.v[i]) return b.v[i] - a.v[i]
+                return 0
+            })
+        for (const v of versions) {
+            const exe = path.join(cacheDir, v.name, 'chrome-win64', 'chrome.exe')
+            if (fs.existsSync(exe)) return exe
+        }
+    } catch {}
+    return undefined
+}
 
 const config = {
     windowWidth: 2000,
@@ -13,7 +37,7 @@ const config = {
     channels: 3,
     appendTestDurationMs: 0,
     save: false,
-    test: 'test-highcharts.html',
+    test: 'test-lcjs.html',
     dataSetSize: 10_000,
     feature: 'line',
     timeoutMs: 15000,
@@ -21,6 +45,7 @@ const config = {
 
 const browser = await puppeteer.launch({
     headless: false,
+    executablePath: findNewerChrome(),
     args: [
         '--disable-background-timer-throttling',
         '--disable-renderer-backgrounding',

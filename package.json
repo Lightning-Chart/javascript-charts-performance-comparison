@@ -11,6 +11,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "chartgpu": "^0.3.2",
         "concurrently": "^8.2.2",
         "express": "^4.21.0",
         "live-server": "^1.2.2",

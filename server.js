@@ -16,6 +16,7 @@ app.use((req, res, next) => {
     next()
 })
 
+app.use('/chartgpu', express.static(path.join(__dirname, 'node_modules/chartgpu/dist')))
 app.use(express.static(path.join(__dirname, 'bench')))
 
 app.listen(8080, () => {

@@ -3,7 +3,7 @@
 LightningChart JS is a performance-oriented data visualization solution for JavaScript.
 The purpose of this open-source repository is to display the performance differences between LightningChart JS and just about every viable alternative in JavaScript charting market.
 
-This test suite covers **23**[\*](#on-which-basis-were-the-solutions-included-in-testing-selected) **different JavaScript-based data visualization solutions**:
+This test suite covers **24**[\*](#on-which-basis-were-the-solutions-included-in-testing-selected) **different JavaScript-based data visualization solutions**:
 
 - [LightningChart® JS](https://lightningchart.com/js-charts/) (v8.2.0)
 - [Highcharts](https://www.highcharts.com/integrations/javascript/) (v12.5.0)
@@ -28,6 +28,7 @@ This test suite covers **23**[\*](#on-which-basis-were-the-solutions-included-in
 - [Epoch](https://epochjs.github.io/epoch/) (v0.8.4)
 - [Google Charts](https://developers.google.com/chart) (April 2023 version - couldn't get latest version working, please open pull request)
 - [FusionCharts (FusionTime)](https://www.fusioncharts.com/fusiontime) (v3.21.1 - couldn't get latest version working, please open pull request)
+- [ChartGPU](https://github.com/ChartGPU/ChartGPU/tree/main) (v0.3.2)
 
 **3 different performance metrics**:
 
@@ -53,7 +54,7 @@ Without context and numbers, users have a very difficult time understanding actu
 
 This is the very reason, why this project exists - to evolve from the empty claims to **proven, reproducable, numerical test results** and contribute to a clearer understanding of performance in this industry, guided by factual reporting. We do not claim any trademarks of competing companies mentioned, and all such trademarks are the property of their respective owners.
 
-We have invested a lot of effort in implementing the 115 different test applications (23 libraries, 5 use cases for each). If you find any problems in our benchmark code, let us know by opening an issue in GitHub.
+We have invested a lot of effort in implementing the 120 different test applications (24 libraries, 5 use cases for each). If you find any problems in our benchmark code, let us know by opening an issue in GitHub.
 
 The test measurements are gathered using an automated benchmark script, which means that there can be no bias from:
 
@@ -65,9 +66,9 @@ The performance comparison project is to be used only for **comparing** performa
 
 ## Summary of results
 
-- On average, LightningChart JS loads data 14410 times faster than other data visualization solutions.
-- On average, LightningChart JS is 810420 times more performant than other data visualization solutions when it comes to streaming data applications.
-- On average, LightningChart JS can display 90540 times larger data sets than other data visualization solutions.
+- On average, LightningChart JS loads data 13940 times faster than other data visualization solutions.
+- On average, LightningChart JS is 783210 times more performant than other data visualization solutions when it comes to streaming data applications.
+- On average, LightningChart JS can display 87740 times larger data sets than other data visualization solutions.
 
 ## Data Loading Speed
 
@@ -107,8 +108,9 @@ In the below table you can see how other solutions Loading speed results fare ag
 | ZingChart         | 3232.6x slower  | 1257.9x slower | 3537.6x slower  | 3184.6x slower  | 3262.1x slower  |
 | FusionCharts      | 86802.1x slower | -              | 84652.4x slower | 96044.7x slower | 80586.1x slower |
 | Google Charts     | 17028.7x slower | 2264.8x slower | 18569.9x slower | 28325.4x slower | -               |
+| ChartGPU          | 57.5x slower    | 4.0x slower    | 65.5x slower    | -               | -               |
 
-**On average, LightningChart JS loads data 14410 times faster than other data visualization solutions.**
+**On average, LightningChart JS loads data 13940 times faster than other data visualization solutions.**
 
 [More information how these results were compiled](#more-information-about-data-loading-speed-results).
 
@@ -129,29 +131,31 @@ In the below table you can see how other solutions Performance results fare agai
 | Solution          | Line Charts    | Scatter Charts | Area Charts    | Spline Charts   | Step Charts     |
 | :---------------- | :------------- | :------------- | :------------- | :-------------- | :-------------- |
 | LightningChart JS | Best score     | Best score     | Best score     | Best score      | Best score      |
-| SciChart.JS       | 130x worse     | 3.2x worse     | 130x worse     | 10280x worse    | 130x worse      |
-| amCharts          | 224860x worse  | 3070x worse    | 246360x worse  | 253840x worse   | 274530x worse   |
-| AnyChart          | 1212520x worse | 34140x worse   | 1312570x worse | 1369490x worse  | 1344730x worse  |
-| ApexCharts.js     | 4627400x worse | 103240x worse  | 4473480x worse | -               | 4671600x worse  |
-| C3.js             | 347380x worse  | 3790x worse    | 351500x worse  | 375030x worse   | 295570x worse   |
-| CanvasJS          | 276230x worse  | 2120x worse    | 255270x worse  | 339460x worse   | 269720x worse   |
-| Chart.js          | -              | 1960x worse    | 161670x worse  | -               | -               |
-| DevExtreme        | 5727870x worse | -              | 588100x worse  | 12116490x worse | 12269600x worse |
-| dvxCharts         | 204940x worse  | -              | 187060x worse  | 211180x worse   | 195900x worse   |
-| Dygraphs          | 3620x worse    | 840x worse     | 4380x worse    | 7640x worse     | 5520x worse     |
-| Apache ECharts    | 15590x worse   | -              | 22040x worse   | 19800x worse    | 16090x worse    |
-| Highcharts        | 39310x worse   | 5780x worse    | 55560x worse   | 56780x worse    | 49500x worse    |
-| Plotly            | 114150x worse  | 22410x worse   | 119180x worse  | 280660x worse   | 103290x worse   |
-| Shield UI         | 187990x worse  | 11870x worse   | 190840x worse  | 215090x worse   | 185600x worse   |
-| Smoothie Charts   | 5000x worse    | -              | 4770x worse    | 5000x worse     | 5000x worse     |
-| Taucharts         | 1223290x worse | 16680x worse   | 1271080x worse | 1287140x worse  | 1255100x worse  |
-| TOAST UI          | -              | -              | -              | -               | -               |
-| μPlot             | 4900x worse    | 120x worse     | 4790x worse    | 15730x worse    | 15460x worse    |
-| ZingChart         | 1280770x worse | 72750x worse   | 1657110x worse | 1656140x worse  | 1528010x worse  |
-| FusionCharts      | -              | -              | -              | -               | -               |
-| Google Charts     | 754290x worse  | 12890x worse   | 748260x worse  | 794900x worse   | -               |
+| SciChart.JS       | 130x worse     | 3.2x worse     | 130x worse     | 253840x worse   | 274530x worse   |
+| amCharts          | 224860x worse  | 3070x worse    | 246360x worse  | 1369490x worse  | 1344730x worse  |
+| AnyChart          | 1212520x worse | 34140x worse   | 1312570x worse | -               | 4671600x worse  |
+| ApexCharts.js     | 4627400x worse | 103240x worse  | 4473480x worse | 375030x worse   | 295570x worse   |
+| C3.js             | 347380x worse  | 3790x worse    | 351500x worse  | 339460x worse   | 269720x worse   |
+| CanvasJS          | 276230x worse  | 2120x worse    | 255270x worse  | -               | -               |
+| Chart.js          | -              | 1960x worse    | 161670x worse  | 12116490x worse | 12269600x worse |
+| DevExtreme        | 5727870x worse | -              | 588100x worse  | 211180x worse   | 195900x worse   |
+| dvxCharts         | 204940x worse  | -              | 187060x worse  | 7640x worse     | 5520x worse     |
+| Dygraphs          | 3620x worse    | 840x worse     | 4380x worse    | 19800x worse    | 16090x worse    |
+| Apache ECharts    | 15590x worse   | -              | 22040x worse   | 56780x worse    | 49500x worse    |
+| Highcharts        | 39310x worse   | 5780x worse    | 55560x worse   | 280660x worse   | 103290x worse   |
+| Plotly            | 114150x worse  | 22410x worse   | 119180x worse  | 215090x worse   | 185600x worse   |
+| Shield UI         | 187990x worse  | 11870x worse   | 190840x worse  | 5000x worse     | 5000x worse     |
+| Smoothie Charts   | 5000x worse    | -              | 4770x worse    | 1287140x worse  | 1255100x worse  |
+| Taucharts         | 1223290x worse | 16680x worse   | 1271080x worse | -               | -               |
+| TOAST UI          | -              | -              | -              | 15730x worse    | 15460x worse    |
+| μPlot             | 4900x worse    | 120x worse     | 4790x worse    | 1656140x worse  | 1528010x worse  |
+| ZingChart         | 1280770x worse | 72750x worse   | 1657110x worse | -               | -               |
+| FusionCharts      | -              | -              | -              | 794900x worse   | -               |
+| Google Charts     | 754290x worse  | 12890x worse   | 748260x worse  | -               | -               |
+| ChartGPU          | 270x worse     | 60x worse      | 1520x worse    | -               | -               |
 
-**On average, LightningChart JS is 810420 times more performant than other data visualization solutions when it comes to streaming data applications.**
+**On average, LightningChart JS is 783210 times more performant than other data visualization solutions whe
+n it comes to streaming data applications.**
 
 [More information how these results were compiled](#more-information-about-streaming-data-performance-results).
 
@@ -162,32 +166,36 @@ Scores are measured as number of data points across all channels.
 
 In the below table you can see how other solutions data capacities fare against LightningChart JS.
 
-| Solution          | Line Charts           | Scatter Charts        | Area Charts           | Spline Charts         | Step Charts           |
-| :---------------- | :-------------------- | :-------------------- | :-------------------- | :-------------------- | :-------------------- |
-| LightningChart JS | Largest data capacity | Largest data capacity | Largest data capacity | Largest data capacity | Largest data capacity |
-| SciChart.JS       | 40.0x smaller         | 2.0x smaller          | 40.0x smaller         | 40000.0x smaller      | 40.0x smaller         |
-| amCharts          | 4000.0x smaller       | 1000.0x smaller       | 4000.0x smaller       | 4000.0x smaller       | 4000.0x smaller       |
-| AnyChart          | 40000.0x smaller      | 1000.0x smaller       | 40000.0x smaller      | 40000.0x smaller      | 40000.0x smaller      |
-| ApexCharts.js     | 40000.0x smaller      | 1000.0x smaller       | 40000.0x smaller      | -                     | 40000.0x smaller      |
-| C3.js             | 4000.0x smaller       | 1000.0x smaller       | 40000.0x smaller      | 4000.0x smaller       | 4000.0x smaller       |
-| CanvasJS          | 4000.0x smaller       | 100.0x smaller        | 4000.0x smaller       | 4000.0x smaller       | 4000.0x smaller       |
-| Chart.js          | -                     | 1000.0x smaller       | 4000.0x smaller       | -                     | -                     |
-| DevExtreme        | 4000.0x smaller       | -                     | 40000.0x smaller      | 4000.0x smaller       | 4000.0x smaller       |
-| dvxCharts         | 400.0x smaller        | -                     | 400.0x smaller        | 40000.0x smaller      | 400.0x smaller        |
-| Dygraphs          | 400.0x smaller        | 100.0x smaller        | 400.0x smaller        | 400.0x smaller        | 400.0x smaller        |
-| Apache ECharts    | 400.0x smaller        | -                     | 400.0x smaller        | 400.0x smaller        | 400.0x smaller        |
-| Highcharts        | 4000.0x smaller       | 1000.0x smaller       | 4000.0x smaller       | 4000.0x smaller       | 4000.0x smaller       |
-| Plotly            | 80.0x smaller         | 1000.0x smaller       | 80.0x smaller         | 4000.0x smaller       | 4000.0x smaller       |
-| Shield UI         | 4000.0x smaller       | 1000.0x smaller       | 4000.0x smaller       | 4000.0x smaller       | 4000.0x smaller       |
-| Smoothie Charts   | 40000.0x smaller      | -                     | 40000.0x smaller      | 40000.0x smaller      | 40000.0x smaller      |
-| Taucharts         | 400000.0x smaller     | 10000.0x smaller      | 400000.0x smaller     | 400000.0x smaller     | 400000.0x smaller     |
-| TOAST UI          | 400000.0x smaller     | 50000.0x smaller      | 2000000.0x smaller    | 2000000.0x smaller    | -                     |
-| μPlot             | 80.0x smaller         | 2.0x smaller          | 80.0x smaller         | 80.0x smaller         | 80.0x smaller         |
-| ZingChart         | 4000.0x smaller       | 100.0x smaller        | 4000.0x smaller       | 4000.0x smaller       | 4000.0x smaller       |
-| FusionCharts      | 400000.0x smaller     | -                     | 400000.0x smaller     | 400000.0x smaller     | 400000.0x smaller     |
-| Google Charts     | 40000.0x smaller      | 1000.0x smaller       | 40000.0x smaller      | 40000.0x smaller      | -                     |
+| Solution          | Line Charts           | Scatter Charts        | Area Charts           | Spline Charts      | Step Charts       |
+| :---------------- | :-------------------- | :-------------------- | :-------------------- | :----------------- | :---------------- |
+| LightningChart JS | Largest data capacity | Largest data capacity | Largest data capacity | Largest data       |
+| capacity          | Largest data capacity |
+| SciChart.JS       | 40.0x smaller         | 2.0x smaller          | 40.0x smaller         | 4000.0x smaller    | 4000.0x smaller   |
+| amCharts          | 4000.0x smaller       | 1000.0x smaller       | 4000.0x smaller       | 40000.0x smaller   | 40000.0x smaller  |
+| AnyChart          | 40000.0x smaller      | 1000.0x smaller       | 40000.0x smaller      | -                  | 40000.0x smaller  |
+| ApexCharts.js     | 40000.0x smaller      | 1000.0x smaller       | 40000.0x smaller      | 4000.0x smaller    | 4000.0x smaller   |
+|                   |
+| C3.js             | 4000.0x smaller       | 1000.0x smaller       | 40000.0x smaller      | 4000.0x smaller    | 4000.0x smaller   |
+| CanvasJS          | 4000.0x smaller       | 100.0x smaller        | 4000.0x smaller       | -                  | -                 |
+| Chart.js          | -                     | 1000.0x smaller       | 4000.0x smaller       | 4000.0x smaller    | 4000.0x smaller   |
+| DevExtreme        | 4000.0x smaller       | -                     | 40000.0x smaller      | 40000.0x smaller   | 400.0x smaller    |
+| dvxCharts         | 400.0x smaller        | -                     | 400.0x smaller        | 400.0x smaller     | 400.0x smaller    |
+| Dygraphs          | 400.0x smaller        | 100.0x smaller        | 400.0x smaller        | 400.0x smaller     | 400.0x smaller    |
+| Apache ECharts    | 400.0x smaller        | -                     | 400.0x smaller        | 4000.0x smaller    | 4000.0x smaller   |
+| Highcharts        | 4000.0x smaller       | 1000.0x smaller       | 4000.0x smaller       | 4000.0x smaller    | 4000.0x smaller   |
+| Plotly            | 80.0x smaller         | 1000.0x smaller       | 80.0x smaller         | 4000.0x smaller    | 4000.0x smaller   |
+| Shield UI         | 4000.0x smaller       | 1000.0x smaller       | 4000.0x smaller       | 40000.0x smaller   | 40000.0x smaller  |
+| Smoothie Charts   | 40000.0x smaller      | -                     | 40000.0x smaller      | 400000.0x smaller  | 400000.0x smaller |
+| Taucharts         | 400000.0x smaller     | 10000.0x smaller      | 400000.0x smaller     | 2000000.0x smaller | -                 |
+| TOAST UI          | 400000.0x smaller     | 50000.0x smaller      | 2000000.0x smaller    | 80.0x smaller      | 80.0x smaller     |
+| μPlot             | 80.0x smaller         | 2.0x smaller          | 80.0x smaller         | 4000.0x smaller    | 4000.0x smaller   |
+| ZingChart         | 4000.0x smaller       | 100.0x smaller        | 4000.0x smaller       | 400000.0x smaller  | 400000.0x smaller |
+| FusionCharts      | 400000.0x smaller     | -                     | 400000.0x smaller     | 40000.0x smaller   | -                 |
+| Google Charts     | 40000.0x smaller      | 1000.0x smaller       | 40000.0x smaller      | -                  | -                 |
+| ChartGPU          | 80.0x smaller         | 2.0x smaller          | 80.0x smaller         | -                  | -                 |
 
-**On average, LightningChart JS can process 90540 times larger data sets than other data visualization solutions.**
+**On average, LightningChart JS can process 87740 times larger data sets than other data visualization solu
+tions.**
 
 [More information how these results were compiled](#more-information-about-max-data-capacity-results).
 
@@ -210,7 +218,7 @@ We have included almost every JavaScript-based data visualization library that w
 - Open-source and closed source libraries.
 - Real-time oriented hardware accelerated libraries.
 - Almost 10 year old industry favorites.
-- Even small players, like `Epoch`.
+- Even small players, like `Epoch` and `ChartGPU`.
 
 ### What is included in Data Loading Speed test "loadTimeSeconds"?
 

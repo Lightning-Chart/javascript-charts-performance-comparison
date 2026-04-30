@@ -1,0 +1,128 @@
+<html>
+    <head>
+        <style>
+            body {
+                margin: 0px;
+            }
+
+            html, body, #chart {
+                width: 100%;
+                height: 100%;
+            }
+            #chart {
+                width: 2000px;
+                height: 1000px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="chart"></div>
+        <script type="module">
+            import { ChartGPU } from '/chartgpu/index.js'
+
+            const container = document.getElementById('chart')
+
+            const config = await window.testSetup()
+            const { channels, dataSetSize, appendPointsPerSecond, appendTestDurationMs, feature } = config
+
+            // Per-channel random-walk data as DataPoint[] = [[x, y], ...]
+            const dataSets = new Array(channels).fill(0).map(() => {
+                const arr = new Array(dataSetSize)
+                let prev = 0
+                for (let x = 0; x < dataSetSize; x += 1) {
+                    prev += Math.random() * 2 - 1
+                    arr[x] = [x, prev]
+                }
+                return arr
+            })
+
+            const seriesTypeFor = (feature) => {
+                switch (feature) {
+                    case 'scatter':
+                        return { type: 'scatter' }
+                    case 'area':
+                        return { type: 'area' }
+                    case 'step':
+                        return { type: 'line', step: true }
+                    case 'spline':
+                        return { type: 'line', smooth: true }
+                    case 'line':
+                    default:
+                        return { type: 'line', sampling: 'none' }
+                }
+            }
+
+            window.testPerform = async () => {
+                try {
+                    const seriesBase = seriesTypeFor(feature)
+                    const buildOptions = (perChannelData) => ({
+                        animation: false,
+                        xAxis: { type: 'value' },
+                        yAxis: { type: 'value' },
+                        series: perChannelData.map((data, i) => ({ ...seriesBase, name: `ch${i}`, data })),
+                    })
+
+                    const chart = await ChartGPU.create(container, buildOptions(dataSets))
+                    chart.resize()
+
+                    requestAnimationFrame(async () => {
+                        window.loadingTestFinished(window.testStart, window.performance.now())
+                        await new Promise((resolve) => setTimeout(resolve, 500))
+
+                        if (!appendTestDurationMs) {
+                            window.appendTestFinished(window.performance.now(), -1)
+                            return
+                        }
+
+                        // appendData can't be used here: it is append-only and has no trim/evict API, so a
+                        // rolling window always requires a full setOption replacement to drop the oldest points.
+                        // Rolling buffers: keep dataSetSize points per channel, drop oldest as new arrive.
+                        const rolling = dataSets.map((arr) => arr.slice())
+                        const tStart = window.performance.now()
+                        let frameCount = 0
+                        let xNext = dataSetSize
+                        let iSample = 0
+                        let tPrev = tStart
+
+                        const frame = () => {
+                            frameCount += 1
+                            const t = window.performance.now()
+                            const d = t - tPrev
+                            tPrev = t
+                            const appendCount = Math.round((appendPointsPerSecond * d) / 1000)
+                            if (appendCount > 0) {
+                                for (let ch = 0; ch < channels; ch += 1) {
+                                    const buf = rolling[ch]
+                                    for (let i = 0; i < appendCount; i += 1) {
+                                        const y = dataSets[ch][(iSample + i) % dataSetSize][1]
+                                        buf.shift()
+                                        buf.push([xNext + i, y])
+                                    }
+                                    rolling[ch] = buf.slice()
+                                }
+                                iSample += appendCount
+                                xNext += appendCount
+                                chart.setOption(buildOptions(rolling))
+                            }
+
+                            if (t - tStart > appendTestDurationMs) {
+                                const fps = (1000 * frameCount) / (t - tStart)
+                                window.appendTestFinished(window.performance.now(), fps)
+                            } else {
+                                requestAnimationFrame(frame)
+                            }
+                        }
+                        requestAnimationFrame(frame)
+                    })
+                } catch (err) {
+                    console.error(err)
+                    if (window.error) window.error()
+                }
+            }
+
+            window.testReadyToBegin()
+        </script>
+        <script src="common.js"></script>
+    </body>
+</html>
