@@ -12,7 +12,8 @@ const findNewerChrome = () => {
     try {
         const cacheDir = path.join(os.homedir(), '.cache', 'puppeteer', 'chrome')
         if (!fs.existsSync(cacheDir)) return undefined
-        const versions = fs.readdirSync(cacheDir)
+        const versions = fs
+            .readdirSync(cacheDir)
             .map((d) => {
                 const m = d.match(/^win64-(\d+)\.(\d+)\.(\d+)\.(\d+)$/)
                 return m ? { name: d, v: m.slice(1).map(Number) } : null
@@ -34,11 +35,11 @@ const config = {
     windowWidth: 2000,
     windowHeight: 1000,
     repeatCount: 1,
-    channels: 3,
+    channels: 20,
     appendTestDurationMs: 0,
     save: false,
     test: 'test-lcjs.html',
-    dataSetSize: 10_000,
+    dataSetSize: 100_000_000,
     feature: 'line',
     timeoutMs: 15000,
 }

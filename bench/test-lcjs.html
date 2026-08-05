@@ -29,7 +29,7 @@
                 emptyLine,
                 emptyFill,
                 emptyTick,
-                DataSetXY,
+                DataSet,
             } = lcjs
 
             window.testSetup().then(({ channels, dataSetSize, appendPointsPerSecond, testAppend, appendTestDurationMs, feature }) => {
@@ -59,8 +59,14 @@
                     // loading speed test
                     const lc = lightningChart({
                         // Put license key here to test locally
+                        license:
+                            '0002-nyUehJQoMtmt7LrxtmXA9xtBc6gdLgAhHp2UKDLNt+Sh5axt2y+jmXZBiQ1r7qYnk8egwmx6DKDPUID5dlB/WqO6VB4X-MEYCIQCUUkaXm+PNtTazPEXRs6RMZq3g8ViPR4wIalRC13mREwIhAOJjaNK/9Nr/V3TUc5N5/YJQ6YwoX0fevI+B5Rskt4LX',
                         webWorkers: {
                             maxWorkers: appendPointsPerSecond > 0 && appendTestDurationMs > 0 ? 0 : undefined,
+                        },
+                        licenseInformation: {
+                            appTitle: 'LightningChart JS Trial',
+                            company: 'LightningChart Ltd.',
                         },
                     })
 
@@ -76,7 +82,7 @@
 
                     const axisXBottom = chart.getDefaultAxisX().setInterval({ start: 0, end: dataSetSize })
 
-                    const dataSet = new DataSetXY({
+                    const dataSet = new DataSet({
                         includesNaN: false,
                         useSharedArrayBuffers: true,
                         schema: {
