@@ -166,33 +166,31 @@ Scores are measured as number of data points across all channels.
 
 In the below table you can see how other solutions data capacities fare against LightningChart JS.
 
-| Solution          | Line Charts           | Scatter Charts        | Area Charts           | Spline Charts      | Step Charts       |
-| :---------------- | :-------------------- | :-------------------- | :-------------------- | :----------------- | :---------------- |
-| LightningChart JS | Largest data capacity | Largest data capacity | Largest data capacity | Largest data       |
-| capacity          | Largest data capacity |
-| SciChart.JS       | 40.0x smaller         | 2.0x smaller          | 40.0x smaller         | 4000.0x smaller    | 4000.0x smaller   |
-| amCharts          | 4000.0x smaller       | 1000.0x smaller       | 4000.0x smaller       | 40000.0x smaller   | 40000.0x smaller  |
-| AnyChart          | 40000.0x smaller      | 1000.0x smaller       | 40000.0x smaller      | -                  | 40000.0x smaller  |
-| ApexCharts.js     | 40000.0x smaller      | 1000.0x smaller       | 40000.0x smaller      | 4000.0x smaller    | 4000.0x smaller   |
-|                   |
-| C3.js             | 4000.0x smaller       | 1000.0x smaller       | 40000.0x smaller      | 4000.0x smaller    | 4000.0x smaller   |
-| CanvasJS          | 4000.0x smaller       | 100.0x smaller        | 4000.0x smaller       | -                  | -                 |
-| Chart.js          | -                     | 1000.0x smaller       | 4000.0x smaller       | 4000.0x smaller    | 4000.0x smaller   |
-| DevExtreme        | 4000.0x smaller       | -                     | 40000.0x smaller      | 40000.0x smaller   | 400.0x smaller    |
-| dvxCharts         | 400.0x smaller        | -                     | 400.0x smaller        | 400.0x smaller     | 400.0x smaller    |
-| Dygraphs          | 400.0x smaller        | 100.0x smaller        | 400.0x smaller        | 400.0x smaller     | 400.0x smaller    |
-| Apache ECharts    | 400.0x smaller        | -                     | 400.0x smaller        | 4000.0x smaller    | 4000.0x smaller   |
-| Highcharts        | 4000.0x smaller       | 1000.0x smaller       | 4000.0x smaller       | 4000.0x smaller    | 4000.0x smaller   |
-| Plotly            | 80.0x smaller         | 1000.0x smaller       | 80.0x smaller         | 4000.0x smaller    | 4000.0x smaller   |
-| Shield UI         | 4000.0x smaller       | 1000.0x smaller       | 4000.0x smaller       | 40000.0x smaller   | 40000.0x smaller  |
-| Smoothie Charts   | 40000.0x smaller      | -                     | 40000.0x smaller      | 400000.0x smaller  | 400000.0x smaller |
-| Taucharts         | 400000.0x smaller     | 10000.0x smaller      | 400000.0x smaller     | 2000000.0x smaller | -                 |
-| TOAST UI          | 400000.0x smaller     | 50000.0x smaller      | 2000000.0x smaller    | 80.0x smaller      | 80.0x smaller     |
-| μPlot             | 80.0x smaller         | 2.0x smaller          | 80.0x smaller         | 4000.0x smaller    | 4000.0x smaller   |
-| ZingChart         | 4000.0x smaller       | 100.0x smaller        | 4000.0x smaller       | 400000.0x smaller  | 400000.0x smaller |
-| FusionCharts      | 400000.0x smaller     | -                     | 400000.0x smaller     | 40000.0x smaller   | -                 |
-| Google Charts     | 40000.0x smaller      | 1000.0x smaller       | 40000.0x smaller      | -                  | -                 |
-| ChartGPU          | 80.0x smaller         | 2.0x smaller          | 80.0x smaller         | -                  | -                 |
+| Solution | Line Charts | Scatter Charts | Area Charts | Spline Charts | Step Charts |
+| :--- |  :--- |  :--- |  :--- |  :--- |  :--- |
+| LightningChart JS | Largest data capacity | Largest data capacity | Largest data capacity | Largest data capacity | Largest data capacity |
+| ChartGPU | 80.0x smaller | 2.0x smaller | 80.0x smaller | 40000.0x smaller | 40.0x smaller |
+| SciChart.JS | 40.0x smaller | 2.0x smaller | 40.0x smaller | 4000.0x smaller | 4000.0x smaller |
+| amCharts | 4000.0x smaller | 1000.0x smaller | 4000.0x smaller | 40000.0x smaller | 40000.0x smaller |
+| AnyChart | 40000.0x smaller | 1000.0x smaller | 40000.0x smaller | - | 40000.0x smaller |
+| ApexCharts.js | 40000.0x smaller | 1000.0x smaller | 40000.0x smaller | 4000.0x smaller | 4000.0x smaller |       
+| C3.js | 4000.0x smaller | 1000.0x smaller | 40000.0x smaller | 4000.0x smaller | 4000.0x smaller |
+| CanvasJS | 4000.0x smaller | 100.0x smaller | 4000.0x smaller | - | - |
+| Chart.js | - | 1000.0x smaller | 4000.0x smaller | 4000.0x smaller | 4000.0x smaller |
+| DevExtreme | 4000.0x smaller | - | 40000.0x smaller | 40000.0x smaller | 400.0x smaller |
+| dvxCharts | 400.0x smaller | - | 400.0x smaller | 400.0x smaller | 400.0x smaller |
+| Dygraphs | 400.0x smaller | 100.0x smaller | 400.0x smaller | 400.0x smaller | 400.0x smaller |
+| Apache ECharts | 400.0x smaller | - | 400.0x smaller | 4000.0x smaller | 4000.0x smaller |
+| Highcharts | 4000.0x smaller | 1000.0x smaller | 4000.0x smaller | 4000.0x smaller | 4000.0x smaller |
+| Plotly | 80.0x smaller | 1000.0x smaller | 80.0x smaller | 4000.0x smaller | 4000.0x smaller |
+| Shield UI | 4000.0x smaller | 1000.0x smaller | 4000.0x smaller | 40000.0x smaller | 40000.0x smaller |
+| Smoothie Charts | 40000.0x smaller | - | 40000.0x smaller | 400000.0x smaller | 400000.0x smaller |
+| Taucharts | 400000.0x smaller | 10000.0x smaller | 400000.0x smaller | 2000000.0x smaller | - |
+| TOAST UI | 400000.0x smaller | 50000.0x smaller | 2000000.0x smaller | 80.0x smaller | 80.0x smaller |
+| μPlot | 80.0x smaller | 2.0x smaller | 80.0x smaller | 4000.0x smaller | 4000.0x smaller |
+| ZingChart | 4000.0x smaller | 100.0x smaller | 4000.0x smaller | 400000.0x smaller | 400000.0x smaller |
+| FusionCharts | 400000.0x smaller | - | 400000.0x smaller | 40000.0x smaller | - |
+| Google Charts | 40000.0x smaller | 1000.0x smaller | 40000.0x smaller | - | - |
 
 **On average, LightningChart JS can process 87740 times larger data sets than other data visualization solu
 tions.**
