@@ -35,14 +35,18 @@ const config = {
     windowWidth: 2000,
     windowHeight: 1000,
     repeatCount: 1,
-    channels: 20,
+    channels: 10,
     appendTestDurationMs: 0,
     save: false,
     test: 'test-lcjs.html',
-    dataSetSize: 100_000_000,
+    dataSetSize: 1_000_000,
+    maxCapacityTest: false,
+    maxCapacityChunkSize: 5_000_000,
+    disableTimeouts: false,
     feature: 'line',
     timeoutMs: 15000,
 }
+const serverPort = Number(process.env.PORT) || 8080
 
 const browser = await puppeteer.launch({
     headless: false,
@@ -72,10 +76,20 @@ const median = (numbers) => {
 
 const runTest = (config) => {
     config.appendPointsPerSecond = config.appendPointsPerSecond !== undefined ? config.appendPointsPerSecond : (config.dataSetSize * 1) / 10
+    const scheduleTimeout = (callback, delayMs) => (config.disableTimeouts ? undefined : setTimeout(callback, delayMs))
 
     return new Promise(async (resolve) => {
         const page = await browser.newPage()
         let timeout
+        const loadingTimeoutMs = config.maxCapacityTest ? Math.max(config.timeoutMs || 15_000, 30_000) : config.timeoutMs || 15_000
+        const setLoadingTimeout = () => {
+            clearTimeout(timeout)
+            timeout = scheduleTimeout(async () => {
+                console.log('timeout B')
+                resolve({ error: true })
+                await page.close()
+            }, loadingTimeoutMs)
+        }
         page.on('console', async (msg) => {
             const text = msg.text()
             console.log('stdout', text)
@@ -122,7 +136,7 @@ const runTest = (config) => {
                 const tAppUnclogged = performance.now()
                 const loadingSpeedResultMs = testEnd - testStart + (tAppUnclogged - tReceivedMessage)
                 clearTimeout(timeout)
-                timeout = setTimeout(async () => {
+                timeout = scheduleTimeout(async () => {
                     console.log('timeout C')
                     resolve({ error: true })
                     await page.close()
@@ -162,9 +176,16 @@ const runTest = (config) => {
                 // For manual confirmation via file
                 fs.writeFileSync(`${config.test}.png`, PNG.sync.write(png))
             })
+            await page.exposeFunction('maxCapacityInputProgress', async () => {
+                if (!loadingTestFinished) {
+                    setLoadingTimeout()
+                }
+            })
             await page.exposeFunction('appendTestFinished', async (timestamp, appendFPS) => {
                 if (!loadingTestFinished) {
-                    await new Promise((resolve) => setTimeout(resolve, 3000))
+                    if (!config.disableTimeouts) {
+                        await new Promise((resolve) => setTimeout(resolve, 3000))
+                    }
                 }
                 clearTimeout(timeout)
                 const metrics2 = await page.metrics()
@@ -180,12 +201,7 @@ const runTest = (config) => {
                     appendJSHeapUsedSize,
                 })
             })
-            clearTimeout(timeout)
-            timeout = setTimeout(async () => {
-                console.log('timeout B')
-                resolve({ error: true })
-                await page.close()
-            }, config.timeoutMs || 15_000)
+            setLoadingTimeout()
             await page.evaluate(() => {
                 requestAnimationFrame(() => {
                     window.testStart = window.performance.now()
@@ -193,12 +209,12 @@ const runTest = (config) => {
                 })
             })
         })
-        timeout = setTimeout(async () => {
+        timeout = scheduleTimeout(async () => {
             console.log('timeout A')
             resolve({ error: true })
             await page.close()
         }, 60_000)
-        await page.goto(`http://localhost:8080/${config.test}`)
+        await page.goto(`http://localhost:${serverPort}/${config.test}`)
     })
 }
 

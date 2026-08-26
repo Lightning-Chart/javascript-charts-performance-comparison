@@ -166,36 +166,33 @@ Scores are measured as number of data points across all channels.
 
 In the below table you can see how other solutions data capacities fare against LightningChart JS.
 
-| Solution          | Line Charts           | Scatter Charts        | Area Charts           | Spline Charts      | Step Charts       |
-| :---------------- | :-------------------- | :-------------------- | :-------------------- | :----------------- | :---------------- |
-| LightningChart JS | Largest data capacity | Largest data capacity | Largest data capacity | Largest data       |
-| capacity          | Largest data capacity |
-| SciChart.JS       | 40.0x smaller         | 2.0x smaller          | 40.0x smaller         | 4000.0x smaller    | 4000.0x smaller   |
-| amCharts          | 4000.0x smaller       | 1000.0x smaller       | 4000.0x smaller       | 40000.0x smaller   | 40000.0x smaller  |
-| AnyChart          | 40000.0x smaller      | 1000.0x smaller       | 40000.0x smaller      | -                  | 40000.0x smaller  |
-| ApexCharts.js     | 40000.0x smaller      | 1000.0x smaller       | 40000.0x smaller      | 4000.0x smaller    | 4000.0x smaller   |
-|                   |
-| C3.js             | 4000.0x smaller       | 1000.0x smaller       | 40000.0x smaller      | 4000.0x smaller    | 4000.0x smaller   |
-| CanvasJS          | 4000.0x smaller       | 100.0x smaller        | 4000.0x smaller       | -                  | -                 |
-| Chart.js          | -                     | 1000.0x smaller       | 4000.0x smaller       | 4000.0x smaller    | 4000.0x smaller   |
-| DevExtreme        | 4000.0x smaller       | -                     | 40000.0x smaller      | 40000.0x smaller   | 400.0x smaller    |
-| dvxCharts         | 400.0x smaller        | -                     | 400.0x smaller        | 400.0x smaller     | 400.0x smaller    |
-| Dygraphs          | 400.0x smaller        | 100.0x smaller        | 400.0x smaller        | 400.0x smaller     | 400.0x smaller    |
-| Apache ECharts    | 400.0x smaller        | -                     | 400.0x smaller        | 4000.0x smaller    | 4000.0x smaller   |
-| Highcharts        | 4000.0x smaller       | 1000.0x smaller       | 4000.0x smaller       | 4000.0x smaller    | 4000.0x smaller   |
-| Plotly            | 80.0x smaller         | 1000.0x smaller       | 80.0x smaller         | 4000.0x smaller    | 4000.0x smaller   |
-| Shield UI         | 4000.0x smaller       | 1000.0x smaller       | 4000.0x smaller       | 40000.0x smaller   | 40000.0x smaller  |
-| Smoothie Charts   | 40000.0x smaller      | -                     | 40000.0x smaller      | 400000.0x smaller  | 400000.0x smaller |
-| Taucharts         | 400000.0x smaller     | 10000.0x smaller      | 400000.0x smaller     | 2000000.0x smaller | -                 |
-| TOAST UI          | 400000.0x smaller     | 50000.0x smaller      | 2000000.0x smaller    | 80.0x smaller      | 80.0x smaller     |
-| μPlot             | 80.0x smaller         | 2.0x smaller          | 80.0x smaller         | 4000.0x smaller    | 4000.0x smaller   |
-| ZingChart         | 4000.0x smaller       | 100.0x smaller        | 4000.0x smaller       | 400000.0x smaller  | 400000.0x smaller |
-| FusionCharts      | 400000.0x smaller     | -                     | 400000.0x smaller     | 40000.0x smaller   | -                 |
-| Google Charts     | 40000.0x smaller      | 1000.0x smaller       | 40000.0x smaller      | -                  | -                 |
-| ChartGPU          | 80.0x smaller         | 2.0x smaller          | 80.0x smaller         | -                  | -                 |
+| Solution          | Line Charts           | Scatter Charts        | Area Charts           | Spline Charts         | Step Charts           |
+| :---------------- | :-------------------- | :-------------------- | :-------------------- | :-------------------- | :-------------------- |
+| LightningChart JS | Largest data capacity | Largest data capacity | Largest data capacity | Largest data capacity | Largest data capacity |
+| ChartGPU          | 300.0x smaller        | 30.0x smaller         | 300.0x smaller        | 150000.0x smaller     | 150.0x smaller        |
+| SciChart.JS       | 150.0x smaller        | 30.0x smaller         | 150.0x smaller        | 15000.0x smaller      | 15000.0x smaller      |
+| amCharts          | 15000.0x smaller      | 15000.0x smaller      | 15000.0x smaller      | 150000.0x smaller     | 150000.0x smaller     |
+| AnyChart          | 150000.0x smaller     | 15000.0x smaller      | 150000.0x smaller     | -                     | 150000.0x smaller     |
+| ApexCharts.js     | 150000.0x smaller     | 15000.0x smaller      | 150000.0x smaller     | 15000.0x smaller      | 15000.0x smaller      |
+| C3.js             | 15000.0x smaller      | 15000.0x smaller      | 150000.0x smaller     | 15000.0x smaller      | 15000.0x smaller      |
+| CanvasJS          | 15000.0x smaller      | 1500.0x smaller       | 15000.0x smaller      | -                     | -                     |
+| Chart.js          | -                     | 15000.0x smaller      | 15000.0x smaller      | 15000.0x smaller      | 15000.0x smaller      |
+| DevExtreme        | 15000.0x smaller      | -                     | 150000.0x smaller     | 150000.0x smaller     | 1500.0x smaller       |
+| dvxCharts         | 1500.0x smaller       | -                     | 1500.0x smaller       | 1500.0x smaller       | 1500.0x smaller       |
+| Dygraphs          | 1500.0x smaller       | 1500.0x smaller       | 1500.0x smaller       | 1500.0x smaller       | 1500.0x smaller       |
+| Apache ECharts    | 1500.0x smaller       | -                     | 1500.0x smaller       | 15000.0x smaller      | 15000.0x smaller      |
+| Highcharts        | 15000.0x smaller      | 15000.0x smaller      | 15000.0x smaller      | 15000.0x smaller      | 15000.0x smaller      |
+| Plotly            | 300.0x smaller        | 15000.0x smaller      | 300.0x smaller        | 15000.0x smaller      | 15000.0x smaller      |
+| Shield UI         | 15000.0x smaller      | 15000.0x smaller      | 15000.0x smaller      | 150000.0x smaller     | 150000.0x smaller     |
+| Smoothie Charts   | 150000.0x smaller     | -                     | 150000.0x smaller     | 1500000.0x smaller    | 1500000.0x smaller    |
+| Taucharts         | 1500000.0x smaller    | 150000.0x smaller     | 1500000.0x smaller    | 7500000.0x smaller    | -                     |
+| TOAST UI          | 1500000.0x smaller    | 750000.0x smaller     | 7500000.0x smaller    | 300.0x smaller        | 300.0x smaller        |
+| μPlot             | 300.0x smaller        | 30.0x smaller         | 300.0x smaller        | 15000.0x smaller      | 15000.0x smaller      |
+| ZingChart         | 15000.0x smaller      | 1500.0x smaller       | 15000.0x smaller      | 1500000.0x smaller    | 1500000.0x smaller    |
+| FusionCharts      | 1500000.0x smaller    | -                     | 1500000.0x smaller    | 150000.0x smaller     | -                     |
+| Google Charts     | 150000.0x smaller     | 15000.0x smaller      | 150000.0x smaller     | -                     | -                     |
 
-**On average, LightningChart JS can process 87740 times larger data sets than other data visualization solu
-tions.**
+**On average, LightningChart JS can process 337050 times larger data sets than other data visualization solutions.**
 
 [More information how these results were compiled](#more-information-about-max-data-capacity-results).
 
@@ -204,9 +201,9 @@ tions.**
 These are the most impressive previously recorded feats with LightningChart JS.
 Obviously, the achievable results differ based on hardware so we can't claim that everyone can reproduce these. The results in question were recorded with a medium-level desktop computer oriented for software development.
 
-- Maximum confirmed data set visualized as an interactive Line Chart: **4 000 million data points**
+- Maximum confirmed data set visualized as an interactive Line Chart: **29 000 million data points**
 - Massive data set with 100 million data points can be loaded and displayed from cold start in **1.07 seconds**
-- LightningChart JS can display 400 channels simultaneously with 10 000 Hz data stream rate per channel and 1 minute time window, adding up to a grand total of **240 million data points visible at every frame and updated at 60 FPS**.
+- LightningChart JS can display 200 channels simultaneously with 50 000 Hz data stream rate per channel, adding up to a grand total of **10 million data points consumed every second and refreshed at 60 FPS**.
 
 ## Clarifications
 
@@ -286,15 +283,17 @@ Frames are counted using `requestAnimationFrame`. This assumes that the chart do
 
 ### More information about Max Data Capacity results
 
-For each solution and tested feature, the same test routine is executed.
+For each solution and tested feature, the same test routine is executed.\*
 
-1. Find the highest amount of data points that the chart can successfully load. Test is timed out if it freezes out for 30 seconds.
+1. Find the highest amount of data points that the chart can successfully load without crashing.
 
 This is done by starting with small data set size, and steadily increasing it until the chart can no longer perform the test.
 The tested data set sizes are always `[200, 1_000, 10_000, 100_000, 1_000_000, 5_000_000, 10_000_000, 50_000_000, 100_000_000]`.
 Number of channels is initially `10`. Increased by increments of `10` if larger data sets needed.
 
 "-" result indicates that the particular combination of test type, solution and tested feature is not supported by the benchmark app. Full support table can be found [here](https://github.com/Lightning-Chart/javascript-charts-performance-comparison/blob/main/supported.md).
+
+\* Starting with LCJS v9.1, a slightly different routine is applied for LCJS. The reason for this is that LCJS started being capable of ingesting datasets larger than 16 GB. At time of writing, **ALL** other libraries had a hard stop at around ~2 GB. Instead of puppeteer chromium browser, the LCJS max data capacity benchmarks were run in a normal Chrome browser. The reason being that Chromium seemed to have a memory alloc limit at 32 GB range. This exception is only used for Max Data Capacity tests, which does not consider loading speed or other metrics.
 
 ## Visualization errors
 

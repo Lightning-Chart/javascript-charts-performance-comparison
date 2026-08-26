@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
+const port = Number(process.env.PORT) || 8080
 
 app.use((req, res, next) => {
     const url = req.url || ''
@@ -19,6 +20,6 @@ app.use((req, res, next) => {
 app.use('/chartgpu', express.static(path.join(__dirname, 'node_modules/chartgpu/dist')))
 app.use(express.static(path.join(__dirname, 'bench')))
 
-app.listen(8080, () => {
-    console.log('Server running at http://localhost:8080')
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`)
 })
